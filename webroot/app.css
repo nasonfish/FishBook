@@ -97,3 +97,7 @@ pre{
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 }
+
+.big-label{
+    font-size: 16px;
+}

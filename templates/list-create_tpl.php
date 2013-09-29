@@ -8,9 +8,12 @@
     <option value="AND">Match ALL categories specified</option>
     <option value="OR">Match AT LEAST one category specified.</option>
 </select>
-<p><a class="js-click" onclick='$(this).after("<input type=\"text\" class=\"category\" name=\"category[]\">")'>Add new placeholder</a></p>
-<input type="text" name="category[]" class="category" placeholder="Student"/>
-<button onclick="event.preventDefault(); $AJAX('/ajax_matcher.php', 'POST', {'category':$('.category').valArray(), type:$('.type').val()}, function(data){$('.data').html(data);})">Get list!</button>
-or <button onclick="event.preventDefault(); $AJAX('/ajax_builder.php', 'POST', {'category':$('.category').valArray(), type:$('.type').val(), glue:$('.glue').val()}, function(data){$('.result').html('<pre>' + data + '</pre>');});">Implode!</button> with glue: <input type="text" name="glue" class="glue" value=", " placeholder=", "/>
+<label for="category" class="big-label">Select Categories</label>
+<p><a class="js-click box-maker" data-for="category">Add new Category</a></p>
+<input type="text" id="category" name="category[]" class="category" placeholder="Student"/>
+<label for="glue" class="big-label">Glue (for building the list of e-mails)</label>
+<input type="text" id="glue" name="glue" class="glue" value=", " placeholder=", "/>
+<button class="matcher">Get list!</button>
+<button class="builder">Implode!</button>
 <div class="result"></div>
 <div class="data"></div>
