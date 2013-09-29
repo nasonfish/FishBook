@@ -15,6 +15,13 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 include('../system/Config.php');
 $type = $peregrine->post->getRaw('type');
 $categories = ($c = $peregrine->post->getRaw('category')) === "" ? array() : explode(',', $c);
+
+foreach($categories as $id=>$category){
+    if(empty($category)){
+        unset($categories[$id]);
+    }
+}
+
 $users = $manager->getUsers($categories, $type);
 if(sizeof($users) > 0){
     $emails = array();
@@ -26,3 +33,4 @@ if(sizeof($users) > 0){
 }
 $glue = ($glue = $peregrine->post->getRaw('glue')) ? $glue : ', ';
 echo implode($glue, $emails);
+$manager->saveBuild($type, $categories, $glue);

@@ -17,6 +17,10 @@ tr.p25 td, tr.p25 th, td.p25, th.p25 {
     width: 25%;
 }
 
+tr.p20 td, tr.p20 th, td.p20, th.p20 {
+    width: 20%;
+}
+
 tr.p33 td, tr.p33 th, td.p33, th.p33 {
      width: 33.33%;
 }
@@ -92,7 +96,7 @@ td{
     text-align: center;
 }
 
-pre{
+pre, code.pre{
     word-wrap: break-word;
     border-width: 2px;
     background-color: #e3e3e3;
@@ -108,6 +112,7 @@ pre{
 
 body{
     font-family: "Open Sans", sans-serif;
+    background: url('/sprinkles/sprinkles.png') repeat;
 }
 
 h1,h2,h3,h4,h5,h6{

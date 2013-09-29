@@ -10,7 +10,7 @@ bottomBar();
 
 $('.box-maker').bind('click', function(event){
     event.preventDefault();
-    $(this).after('<input type="text" name="'+$(this).attr('data-for')+'[]">');
+    $(this).after('<input type="text" class="'+$(this).attr('data-for')+'" name="'+$(this).attr('data-for')+'[]">');
     bottomBar();
 });
 
@@ -45,4 +45,15 @@ $('.builder').bind('click', function(event){
             bottomBar();
         }
     );
+});
+
+$('#all-search').bind('keyup', function(event){
+    var inp = $(this);
+    $('.search').each(function(obj){
+        if($(obj).attr('data-search-for').toLowerCase().indexOf(inp.val().toLowerCase()) === -1){
+            $(obj).hide();
+        } else {
+            $(obj).css('display', 'table-row');
+        }
+    });
 });

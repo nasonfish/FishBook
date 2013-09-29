@@ -39,6 +39,44 @@ class Choir{
     }
 */
 
+    public function saveBuild($type, $categories, $glue){
+        $cmd = new Predis\Command\KeyExists();
+        $cmd->setRawArguments(array('builds:next_id'));
+        if(!($this->db->executeCommand($cmd))){
+            $cmd = new Predis\Command\StringSet();
+            $cmd->setRawArguments(array('builds:next_id', 0));
+            $this->db->executeCommand($cmd);
+            $id = 0;
+        } else {
+            $cmd = new Predis\Command\StringGet();
+            $cmd->setRawArguments(array('builds:next_id'));
+            $id = $this->db->executeCommand($cmd);
+        }
+        $cmd = new Predis\Command\StringSet();
+        $cmd->setRawArguments(array('build:' . $id . ':type', $type));
+        $this->db->executeCommand($cmd);
+        $cmd->setRawArguments(array('build:' . $id . ':glue', $glue));
+        $this->db->executeCommand($cmd);
+        $cmd = new Predis\Command\SetAdd();
+        $cmd->setRawArguments(array_merge(array('build:' . $id . ':categories'), $categories));
+        $this->db->executeCommand($cmd);
+        $cmd->setRawArguments(array('builds', $id));
+        $this->db->executeCommand($cmd);
+        $cmd = new Predis\Command\StringIncrement();
+        $cmd->setRawArguments(array('builds:next_id'));
+        $this->db->executeCommand($cmd);
+    }
+
+    public function getBuilds(){
+        $cmd = new Predis\Command\SetMembers();
+        $cmd->setRawArguments(array('builds'));
+        return $this->db->executeCommand($cmd);
+    }
+
+    public function build($id){
+        return new Build($id, $this);
+    }
+
     public function getUsers($categories = array(), $type = "AND"){
         $users = $this->users();
         if(empty($categories)){
@@ -299,4 +337,43 @@ class User{
     public function getContact(){
         return $this->data('contact');
     }
+}
+
+class Build{
+
+    private $handler;
+    private $id;
+
+    public function __construct($id, $handler){
+        $this->id = $id;
+        $this->handler = $handler;
+    }
+
+    public function exists(){
+        $cmd = new Predis\Command\SetIsMember();
+        $cmd->setRawArguments(array('builds', $this->id));
+        return $this->handler->db->executeCommand($cmd);
+    }
+
+    public function data($key){
+        $cmd = strtolower($key) === "categories" ?
+            new Predis\Command\SetMembers() :
+            new Predis\Command\StringGet();
+        $cmd->setRawArguments(array('build:' . $this->id . ':' . $key));
+        return $this->handler->db->executeCommand($cmd);
+    }
+
+    public function getType(){
+        return $this->data('type');
+    }
+    public function getGlue(){
+        return $this->data('glue');
+    }
+    public function getCategories(){
+        return $this->data('categories');
+    }
+    public function getID(){
+        return $this->id;
+    }
+
 }

@@ -17,11 +17,12 @@
                     <td><h2 class="title"><a href="/">Choir People Manager</a></h2></td>
                     <td colspan="3"></td>
                 </tr>
-                <tr class="secondary center p25">
-                    <td><a href="/create/">Create a user!</a></td>
-                    <td><a href="/all/">View all users!</a></td>
-                    <td><a href="/groups/">View all groups!</a></td>
-                    <td><a href="/list-create/">Create a mailing list!</a></td>
+                <tr class="secondary center p20">
+                    <td><a href="/create/">Create user</a></td>
+                    <td><a href="/all/">View users</a></td>
+                    <td><a href="/groups/">View groups</a></td>
+                    <td><a href="/list-create/">Create mailing list</a></td>
+                    <td><a href="/list-recent/">Recent mailing lists</a></td>
                 </tr>
             </table>
         </div>
@@ -34,7 +35,7 @@
          <?php $this->foot(); ?>
         <table class="bottom">
             <tr class="p50">
-                <td><a href="mailto:nasonfish@nasonfish.com" class="w-link">Find any bugs? Let me know!</a></td>
+                <td><a href="mailto:nasonfish@nasonfish.com" class="w-link">Have you found any bugs? Let me know!</a></td>
                 <td>Source code may be released soon!</td>
             </tr>
         </table>
