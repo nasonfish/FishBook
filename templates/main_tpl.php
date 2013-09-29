@@ -33,6 +33,7 @@
 </div>
 <footer>
     <script src="/simpledom.js"></script>
+    <script src="/app.js"></script>
     <?php $this->js(); ?>
 </footer>
 </body>
