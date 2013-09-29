@@ -1,3 +1,4 @@
+<h2>Create a new user!</h2>
 <form method="post" action="/create.php" class="hr-gray">
     <label for="name">What is the name of the user you are adding?</label>
     <input type="text" name="name" id="name" placeholder="Your Name"/>

@@ -3,6 +3,7 @@
 function include_e($page = false, $pass = array()){
     if($page !== false && file_exists($page)){
         global $manager;
+        global $peregrine;
         include($page);
         return true;
     }

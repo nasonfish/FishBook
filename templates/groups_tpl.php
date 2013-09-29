@@ -3,14 +3,14 @@
     <table class="p100 border-gray">
         <tr class="p33">
             <th>Name</th>
-            <th>Amount of users</th>
             <th>People</th>
+            <th>Total users</th>
         </tr>
         <?php foreach($groups as $name): ?>
             <tr class="p33">
                 <td><a href="/group/<?=str_replace(' ', '-', $name)?>/"><?=$name?></a></td>
-                <td><?=$manager->inGroup($name);?></td>
                 <td><?=str_replace('-', ' ', implode(', ', array_slice($manager->byGroup($name), 0, 3)));?></td>
+                <td><?=$manager->inGroup($name);?></td>
             </tr>
         <?php endforeach; ?>
     </table>

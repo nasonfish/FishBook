@@ -41,6 +41,9 @@ class Choir{
 
     public function getUsers($categories = array(), $type = "AND"){
         $users = $this->users();
+        if(empty($categories)){
+            return $users;
+        }
         $result = array();
         if($type === "AND"){
             foreach($users as $username){
@@ -100,16 +103,19 @@ class Choir{
             $scmd = new Predis\Command\SetAdd();
             $scmd->setRawArguments(array('users', $name));
             $this->db->executeCommand($scmd);
+        $notes = $notes ? $notes : array();
         foreach($notes as $note){
             if(empty($note)) continue;
             $scmd->setRawArguments(array('user:'.$name.':notes', $note));
             $this->db->executeCommand($scmd);
         }
+        $contact = $contact ? $contact : array();
         foreach($contact as $c){
             if(empty($c)) continue;
             $scmd->setRawArguments(array('user:'.$name.':contact', $c));
             $this->db->executeCommand($scmd);
         }
+        $part = $part ? $part : array();
         foreach($part as $tag){ // TODO cleanup variable names
             if(empty($tag)) continue;
             $tag = str_replace('-', ' ', $tag);
@@ -140,6 +146,7 @@ class Choir{
         $del->setRawArguments(array('user:'.$name.':tags'));
         $this->db->executeCommand($del);
         $scmd = new Predis\Command\SetAdd();
+        $parts = $parts ? $parts : array();
         foreach($parts as $part){
             if(empty($part)) continue;
             $part = str_replace('-', ' ', $part);
@@ -152,6 +159,7 @@ class Choir{
         }
         $del->setRawArguments(array('user:'.$name.':notes'));
         $this->db->executeCommand($del);
+        $notes = $notes ? $notes : array();
         foreach($notes as $note){
             if(empty($note)) continue;
             $scmd->setRawArguments(array('user:'.$name.':notes', $note));
@@ -159,6 +167,7 @@ class Choir{
         }
         $del->setRawArguments(array('user:'.$name.':contact'));
         $this->db->executeCommand($del);
+        $contact = $contact ? $contact : array();
         foreach($contact as $c){
             if(empty($c)) continue;
             $scmd->setRawArguments(array('user:'.$name.':contact', $c));

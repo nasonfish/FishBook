@@ -1,3 +1,4 @@
+<h2>Edit a user!</h2>
 <?php if(isset($pass[0]) && ($user = $manager->user($pass[0])) && $user->exists()): ?>
 <form method="post" action="/edit.php" class="hr-gray">
     <label for="name">What is the name of the user you are editing?</label>
@@ -24,7 +25,7 @@
     <input type="text" name="contact[]" id="contact" value="<?=$contact?>"/>
     <?php endforeach; ?>
     <hr/>
-    <button type="submit">Submit and add this new user!</button>
+    <button type="submit">Submit to update this user's information!</button>
 </form>
 <?php else: ?>
 <p>User not found.</p>

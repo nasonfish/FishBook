@@ -14,7 +14,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 }
 include('../system/Config.php');
 $type = $peregrine->post->getRaw('type');
-$categories = explode(',', $peregrine->post->getRaw('category'));
+$categories = ($c = $peregrine->post->getRaw('category')) === "" ? array() : explode(',', $c);
 $users = $manager->getUsers($categories, $type);
 if(sizeof($users) > 0): ?>
     <table class="p100 border-gray">

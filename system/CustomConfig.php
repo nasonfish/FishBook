@@ -8,5 +8,6 @@ include('../libs/Choir.class.php');
 global $manager;
 $manager = new Choir;
 include('../libs/Peregrine/Peregrine.php');
+global $peregrine;
 $peregrine = new Peregrine();
 $peregrine->init();

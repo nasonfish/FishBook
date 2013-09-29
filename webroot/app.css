@@ -21,6 +21,10 @@ tr.p33 td, tr.p33 th, td.p33, th.p33 {
      width: 33.33%;
 }
 
+tr.p50 td, tr.p50 th, td.p50, th.p50 {
+    width: 50%;
+}
+
 .head a{
     color: #eeeeee;
     text-decoration: none;
@@ -34,7 +38,7 @@ tr.p33 td, tr.p33 th, td.p33, th.p33 {
 }
 
 .border-gray, .border-gray *{
-    border: 2px #bebebe;
+    border-color: #747474;
 }
 
 .body{
@@ -100,4 +104,36 @@ pre{
 
 .big-label{
     font-size: 16px;
+}
+
+body{
+    font-family: "Open Sans", sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6{
+    color: #135696;
+    font-family: "Source Sans Pro", sans-serif;
+}
+
+.title{
+    font-family: "Cabin", sans-serif;
+}
+
+.bottom{
+    width: 98.6%;
+    margin: 40px 0 0 0;
+    padding: 0;
+    background-color: #03523c;
+    border-color: #03523c;
+    color: white;
+}
+.w-link{
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+.w-link:hover{
+    color: #eaeaea;
+    text-decoration: underline;
+    cursor: pointer;
 }

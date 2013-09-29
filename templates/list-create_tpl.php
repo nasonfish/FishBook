@@ -3,16 +3,23 @@
 <p>Currently, you can build the mailing list by categories using the AND and OR logic operators.</p>
 <p>AND would make sure <b>all</b> categories specified match the user, while OR makes sure at least one of them matches.</p>
 <p>More functionality is coming soon.</p>
-
-<select name="type" class="type">
-    <option value="AND">Match ALL categories specified</option>
-    <option value="OR">Match AT LEAST one category specified.</option>
+<label for="type">AND or OR logic operator?</label>
+<select name="type" class="type" id="type">
+    <option value="AND" <?=($type = $peregrine->get->getRaw('type')) === 'AND' ? 'selected="selected"' : ''?>>Match ALL categories specified</option>
+    <option value="OR" <?=$type==='OR' ? 'selected="selected"' : ''?>>Match AT LEAST one category specified.</option>
 </select>
-<label for="category" class="big-label">Select Categories</label>
+<label for="category" class="big-label">Select Categories (or leave blank to select all users)</label>
 <p><a class="js-click box-maker" data-for="category">Add new Category</a></p>
-<input type="text" id="category" name="category[]" class="category" placeholder="Student"/>
+<?php if($categories = $peregrine->get->getArray('category')){
+    foreach($categories as $category){
+        echo '<input type="text" name="category[]" class="category" placeholder="Student" value="'.$category.'"/>';
+    }
+} else {
+    echo '<input type="text" id="category" name="category[]" class="category" placeholder="Student"/>';
+}
+?>
 <label for="glue" class="big-label">Glue (for building the list of e-mails)</label>
-<input type="text" id="glue" name="glue" class="glue" value=", " placeholder=", "/>
+<input type="text" id="glue" name="glue" class="glue" value="<?=($glue = $peregrine->get->getRaw('glue')) ? $glue : ', '?>" placeholder=", "/>
 <button class="matcher">Get list!</button>
 <button class="builder">Implode!</button>
 <div class="result"></div>
