@@ -14,9 +14,9 @@ exit;
 }
 include('../system/Config.php');
 $manager->create(
-    $peregrine->post->getName('name'),
+    str_replace(' ', '-', $peregrine->post->getName('name')),
     $peregrine->post->getEmail('email'),
-    $peregrine->post->getPhone('phone'),
+    $peregrine->post->getRaw('phone'),
     $peregrine->post->getArray('tags'),
     $peregrine->post->getArray('notes'),
     $peregrine->post->getArray('contact')

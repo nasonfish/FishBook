@@ -232,6 +232,14 @@ $ = function( selector ){
             }
         },
 
+        valArray: function(){
+            values = [];
+            for(var n = 0, l = _matches.length; n < l; n++){
+                values.push(_matches[n].value);
+            }
+            return values;
+        },
+
         /**
          * Loop through all found elements and execute a function
          * for each element.

@@ -13,19 +13,16 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
     }
 }
 include('../system/Config.php');
-require '../system/PageHandler.class.php';
-$temp = $peregrine->server->getRaw('REQUEST_URI');
-$uri = explode('/', strpos($temp, '?') ? strstr($temp, '?', true) : $temp);
-foreach($uri as $id => $dir){
-    if($dir == ""){
-        unset($uri[$id]);
-    }
-}
-$page = isset($uri[1]) ? $uri[1] : 'index';
-array_shift($uri);
-$args = $uri === NULL ? array() : $uri;
-if(strpos($page, '_') === 0){
-    include $page.'.php'; // BE WEARY OF INJECTION!!!
+$type = $peregrine->post->getRaw('type');
+$categories = explode(',', $peregrine->post->getRaw('category'));
+$users = $manager->getUsers($categories, $type);
+if(sizeof($users) > 0){
+    $emails = array();
+        foreach($users as $name){
+            $emails[] = $manager->user($name)->getEmail();
+        }
 } else {
-    new PageHandler($page, $args);
+    echo "No Users were found.";
 }
+$glue = ($glue = $peregrine->post->getRaw('glue')) ? $glue : ', ';
+echo implode($glue, $emails);

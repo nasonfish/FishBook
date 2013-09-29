@@ -15,6 +15,50 @@ class Choir{
         $auth->setRawArguments(array(file_get_contents('../redispass.txt')));
         $this->db->executeCommand($auth);
     }
+/* WORK IN PROGRESS. I can work on this later, but it's really difficult to deal with.
+    public function getUsers($pattern){
+        // First, we just want to make sure the parenths are even
+        if(substr_count($pattern, '(') !== substr_count($pattern, ')')){
+            return 'A Syntax Error occurred.';
+        }
+        $users = $this->users();
+        $this->match($pattern, $users, 0);
+    }
+
+    private function match($pattern, $users, $nest){
+        $regex = '/(\([^\)]+\))/';
+        preg_match($regex, $pattern, $matches);
+        array_shift($matches);
+        if(empty($matches)){
+
+        } else {
+            foreach($matches as $match){
+                $this->match($match, $users, $nest + 1);
+            }
+        }
+    }
+*/
+
+    public function getUsers($categories = array(), $type = "AND"){
+        $users = $this->users();
+        $result = array();
+        if($type === "AND"){
+            foreach($users as $username){
+                $user = $this->user($username);
+                if(array_intersect($categories, $user->getTags()) === $categories){
+                    $result[] = $username;
+                }
+            }
+        } elseif($type === "OR") {
+            foreach($users as $username){
+                $user = $this->user($username);
+                if(sizeof(array_intersect($categories, $user->getTags())) > 0){
+                    $result[] = $username;
+                }
+            }
+        }
+        return $result;
+    }
 
     public function users(){
         $cmd = new Predis\Command\SetMembers();
@@ -24,21 +68,19 @@ class Choir{
 
     public function groups(){
         $cmd = new Predis\Command\SetMembers();
-        $cmd->setRawArguments(array('parts'));
+        $cmd->setRawArguments(array('tags'));
         return $this->db->executeCommand($cmd);
     }
 
     public function byGroup($group){
         $cmd = new Predis\Command\SetMembers();
-        $cmd->setRawArguments(array('part:' . $group));
+        $cmd->setRawArguments(array('tag:' . $group));
         return $this->db->executeCommand($cmd);
     }
 
-    public function data($name, $key){
-        $cmd = strtolower($key) === "contact" || strtolower($key) === "notes" ?
-            new Predis\Command\SetMembers() :
-            new Predis\Command\StringGet();
-        $cmd->setRawArguments(array('user:' . $name . ':' . $key));
+    public function inGroup($group){
+        $cmd = new Predis\Command\SetCardinality();
+        $cmd->setRawArguments(array('tag:' . $group));
         return $this->db->executeCommand($cmd);
     }
 
@@ -55,21 +97,27 @@ class Choir{
         $this->db->executeCommand($cmd);
         $cmd->setRawArguments(array('user:'.$name.':phone', $phone));
         $this->db->executeCommand($cmd);
-        $cmd->setRawArguments(array('user:'.$name.':tag', $part));
-        $this->db->executeCommand($cmd);
             $scmd = new Predis\Command\SetAdd();
-            $scmd->setRawArguments(array('tags', $part));
-            $this->db->executeCommand($scmd);
-            $scmd->setRawArguments(array('tag:' . $part, $name));
-            $this->db->executeCommand($scmd);
             $scmd->setRawArguments(array('users', $name));
             $this->db->executeCommand($scmd);
         foreach($notes as $note){
-            $scmd->setRawArguments('user:'.$name.':notes', $note);
+            if(empty($note)) continue;
+            $scmd->setRawArguments(array('user:'.$name.':notes', $note));
             $this->db->executeCommand($scmd);
         }
         foreach($contact as $c){
-            $scmd->setRawArguments('user:'.$name.':contact', $c);
+            if(empty($c)) continue;
+            $scmd->setRawArguments(array('user:'.$name.':contact', $c));
+            $this->db->executeCommand($scmd);
+        }
+        foreach($part as $tag){ // TODO cleanup variable names
+            if(empty($tag)) continue;
+            $tag = str_replace('-', ' ', $tag);
+            $scmd->setRawArguments(array('user:'.$name.':tags', $tag));
+            $this->db->executeCommand($scmd);
+            $scmd->setRawArguments(array('tags', $tag));
+            $this->db->executeCommand($scmd);
+            $scmd->setRawArguments(array('tag:' . $tag, $name));
             $this->db->executeCommand($scmd);
         }
         return true;
@@ -93,6 +141,8 @@ class Choir{
         $this->db->executeCommand($del);
         $scmd = new Predis\Command\SetAdd();
         foreach($parts as $part){
+            if(empty($part)) continue;
+            $part = str_replace('-', ' ', $part);
             $scmd->setRawArguments(array('user:'.$name.':tags', $part));
             $this->db->executeCommand($scmd);
             $scmd->setRawArguments(array('tags', $part));
@@ -103,40 +153,20 @@ class Choir{
         $del->setRawArguments(array('user:'.$name.':notes'));
         $this->db->executeCommand($del);
         foreach($notes as $note){
-            $scmd->setRawArguments('user:'.$name.':notes', $note);
+            if(empty($note)) continue;
+            $scmd->setRawArguments(array('user:'.$name.':notes', $note));
             $this->db->executeCommand($scmd);
         }
         $del->setRawArguments(array('user:'.$name.':contact'));
         $this->db->executeCommand($del);
         foreach($contact as $c){
-            $scmd->setRawArguments('user:'.$name.':contact', $c);
+            if(empty($c)) continue;
+            $scmd->setRawArguments(array('user:'.$name.':contact', $c));
             $this->db->executeCommand($scmd);
         }
         return true;
     }
 
-    public function note($name, $note){
-        $cmd = new Predis\Command\SetAdd();
-        $cmd->setRawArguments(array('user:'.$name.':notes', $note));
-        $this->db->executeCommand($cmd);
-    }
-
-    public function delNote($name, $note){
-        $cmd = new Predis\Command\SetRemove();
-        $cmd->setRawArguments(array('user:'.$name.':notes', $note));
-        $this->db->executeCommand($cmd);
-    }
-
-    public function contact($name, $contact){
-        $cmd = new Predis\Command\SetAdd();
-        $cmd->setRawArguments(array('user:'.$name.':contact', $contact));
-        $this->db->executeCommand($cmd);
-    }
-    public function delContact($name, $contact){
-        $cmd = new Predis\Command\SetRemove();
-        $cmd->setRawArguments(array('user:'.$name.':contact', $contact));
-        $this->db->executeCommand($cmd);
-    }
 
     public function delete($name){
         $check = new Predis\Command\SetIsMember();
@@ -160,13 +190,13 @@ class Choir{
             $rem->setRawArguments(array('tag:' . $part, $name));
             $this->db->executeCommand($rem);
             $card = new Predis\Command\SetCardinality();
-            $card->setRawArguments('tag:' . $part);
+            $card->setRawArguments(array('tag:' . $part));
             if($this->db->executeCommand($card) === 0){
                 $rem->setRawArguments(array('tags', $part));
                 $this->db->executeCommand($rem);
             }
         }
-        $cmd->setRawArguments(array('user:'.$name.':tagss'));
+        $cmd->setRawArguments(array('user:'.$name.':tags'));
         $this->db->executeCommand($cmd);
         $cmd->setRawArguments(array('user:'.$name.':notes'));
         $this->db->executeCommand($cmd);
@@ -186,7 +216,7 @@ class Choir{
      */
 
     public function user($name){
-        return new User($name, $this);
+        return new User(str_replace(' ', '-', $name), $this);
     }
 }
 
@@ -198,5 +228,66 @@ class User{
     public function __construct($name, $manager){
         $this->name = $name;
         $this->manager = $manager;
+    }
+
+    public function getName(){
+        return str_replace('-', ' ', $this->name);
+    }
+
+    public function exists(){
+        $cmd = new Predis\Command\SetIsMember();
+        $cmd->setRawArguments(array('users', $this->name));
+        return $this->manager->db->executeCommand($cmd);
+    }
+
+    public function getRawName(){
+        return $this->data('name');
+    }
+
+    public function note($name, $note){
+        $cmd = new Predis\Command\SetAdd();
+        $cmd->setRawArguments(array('user:'.$name.':notes', $note));
+        $this->manager->db->executeCommand($cmd);
+    }
+
+    public function delNote($name, $note){
+        $cmd = new Predis\Command\SetRemove();
+        $cmd->setRawArguments(array('user:'.$name.':notes', $note));
+        $this->manager->db->executeCommand($cmd);
+    }
+
+    public function contact($name, $contact){
+        $cmd = new Predis\Command\SetAdd();
+        $cmd->setRawArguments(array('user:'.$name.':contact', $contact));
+        $this->manager->db->executeCommand($cmd);
+    }
+    public function delContact($name, $contact){
+        $cmd = new Predis\Command\SetRemove();
+        $cmd->setRawArguments(array('user:'.$name.':contact', $contact));
+        $this->manager->db->executeCommand($cmd);
+    }
+
+    public function data($key){
+        $cmd = strtolower($key) === "contact" || strtolower($key) === "notes" || strtolower($key) == "tags" ?
+            new Predis\Command\SetMembers() :
+            new Predis\Command\StringGet();
+        $cmd->setRawArguments(array('user:' . $this->name . ':' . $key));
+        return $this->manager->db->executeCommand($cmd);
+    }
+    //$name, $email, $phone, $part, $notes, $contact
+    public function getEmail(){
+        return $this->data('email');
+    }
+    public function getPhone(){
+        return $this->data('phone');
+    }
+    public function getTags(){
+        return $this->data('tags');
+    }
+    public function getNotes(){
+        return $this->data('notes');
+    }
+    public function getContact(){
+        return $this->data('contact');
     }
 }
