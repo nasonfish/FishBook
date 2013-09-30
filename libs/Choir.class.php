@@ -223,6 +223,21 @@ class Choir{
         $del = new Predis\Command\KeyDelete();
         $del->setRawArguments(array('user:'.$name.':tags'));
         $this->db->executeCommand($del);
+
+        $oldTags = new Predis\Command\SetMembers();
+        $oldTags->setRawArguments(array('user:'.$name.':tags'));
+        foreach($this->db->executeCommand($oldTags) as $part){
+            $rem = new Predis\Command\SetRemove();
+            $rem->setRawArguments(array('tag:' . $part, $name));
+            $this->db->executeCommand($rem);
+            $card = new Predis\Command\SetCardinality();
+            $card->setRawArguments(array('tag:' . $part));
+            if($this->db->executeCommand($card) === 0){
+                $rem->setRawArguments(array('tags', $part));
+                $this->db->executeCommand($rem);
+            }
+        }
+
         $scmd = new Predis\Command\SetAdd();
         $parts = $parts ? $parts : array();
         foreach($parts as $part){
