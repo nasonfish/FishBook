@@ -13,12 +13,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
     }
 }
 include('../system/Config.php');
-$manager->edit(
-    str_replace(' ', '-', $peregrine->post->getName('name')),
-    $peregrine->post->getEmail('email'),
-    $peregrine->post->getRaw('phone'),
-    $peregrine->post->getArray('tags'),
-    $peregrine->post->getArray('notes'),
-    $peregrine->post->getArray('contact')
+$manager->delete(
+    str_replace(' ', '-', $peregrine->post->getName('name'))
 );
-header(sprintf('Location: /user/%s/', str_replace(' ', '-', $peregrine->post->getName('name'))));
+header(sprintf('Location: /', str_replace(' ', '-', $peregrine->post->getName('name'))));

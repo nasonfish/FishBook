@@ -1,5 +1,9 @@
 <h2>Edit a user!</h2>
 <?php if(isset($pass[0]) && ($user = $manager->user($pass[0])) && $user->exists()): ?>
+    <form method="post" action="/delete.php" class="hr-gray">
+        <input style="display: none;" name="name" value="<?=$pass[0]?>"/>
+        <button type="submit" class="red">Delete this  user?</button>
+    </form>
 <form method="post" action="/edit.php" class="hr-gray">
     <label for="name">What is the name of the user you are editing?</label>
     <input type="text" name="name" id="name" value="<?=$pass[0]?>" readonly/>

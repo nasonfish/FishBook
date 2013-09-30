@@ -256,6 +256,10 @@ class Choir{
         $this->db->executeCommand($cmd);
         $cmd->setRawArguments(array('user:'.$name.':contact'));
         $this->db->executeCommand($cmd);
+
+        $cmd = new Predis\Command\SetRemove();
+        $cmd->setRawArguments(array('users', $name));
+        $this->db->executeCommand($cmd);
         return true;
     }
 
