@@ -6,15 +6,18 @@ if($peregrine->get->keyExists('id')){
         $type = $build->getType();
         $glue = $build->getGlue();
         $categories = $build->getCategories();
+        $data = $build->getData();
     } else {
         $type = $peregrine->get->getRaw('type');
         $categories = $peregrine->get->getArray('category');
         $glue = $peregrine->get->getRaw('glue');
+        $glue = $peregrine->get->getRaw('data');
     }
 } else {
     $type = $peregrine->get->getRaw('type');
     $categories = $peregrine->get->getArray('category');
     $glue = $peregrine->get->getRaw('glue');
+    $glue = $peregrine->get->getRaw('data');
 }
 ?>
 <h2>Build a Mailing List!</h2>
@@ -37,8 +40,13 @@ if($peregrine->get->keyExists('id')){
     echo '<input type="text" id="category" name="category[]" class="category" placeholder="Student"/>';
 }
 ?>
-<label for="glue" class="big-label">Glue (for building the list of e-mails)</label>
-<input type="text" id="glue" name="glue" class="glue" value="<?=$glue ? $glue : ', '?>" placeholder=", "/>
+<p><a class="js-click show-toggle" data-for="advanced-settings" style="display: block;">Show Advanced Settings</a></p>
+<div id="advanced-settings" class="hidden" style="display: none;">
+    <label for="glue" class="big-label">Glue (for building the list of e-mails)</label>
+    <input type="text" id="glue" name="glue" class="glue" value="<?=$glue ? $glue : ', '?>" placeholder=", "/>
+    <label for="data" class="big-label">Data (email, phone, name, contact, notes, tags)</label>
+    <input type="text" id="data" name="data" class="data" value="<?=$data ? $data : 'email'?>" placeholder="email"/>
+</div>
 <button class="matcher">Get list!</button>
 <button class="builder">Implode!</button>
 <div class="result"></div>

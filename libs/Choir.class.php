@@ -39,7 +39,7 @@ class Choir{
     }
 */
 
-    public function saveBuild($type, $categories, $glue){
+    public function saveBuild($type, $categories, $glue, $data){
         $cmd = new Predis\Command\KeyExists();
         $cmd->setRawArguments(array('builds:next_id'));
         if(!($this->db->executeCommand($cmd))){
@@ -57,9 +57,13 @@ class Choir{
         $this->db->executeCommand($cmd);
         $cmd->setRawArguments(array('build:' . $id . ':glue', $glue));
         $this->db->executeCommand($cmd);
-        $cmd = new Predis\Command\SetAdd();
-        $cmd->setRawArguments(array_merge(array('build:' . $id . ':categories'), $categories));
+        $cmd->setRawArguments(array('build:' . $id . ':data', $data));
         $this->db->executeCommand($cmd);
+        $cmd = new Predis\Command\SetAdd();
+        if(!empty($categories)){
+            $cmd->setRawArguments(array_merge(array('build:' . $id . ':categories'), $categories));
+            $this->db->executeCommand($cmd);
+        }
         $cmd->setRawArguments(array('builds', $id));
         $this->db->executeCommand($cmd);
         $cmd = new Predis\Command\StringIncrement();
@@ -374,6 +378,9 @@ class Build{
     }
     public function getCategories(){
         return $this->data('categories');
+    }
+    public function getData(){
+        return $this->data('data');
     }
     public function getID(){
         return $this->id;

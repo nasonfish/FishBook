@@ -26,9 +26,10 @@ $('.builder').bind('click', function(event){
         '/ajax_builder.php',
         'POST',
         {
-            'category':$('.category').valArray(),
-            type:$('.type').val(),
-            glue:$('.glue').val()
+            'category': $('.category').valArray(),
+            type: $('.type').val(),
+            glue: $('.glue').val(),
+            data: $('.data').val()
         },
         function(data){
             $('.result').html('<pre>' + data + '</pre>');
@@ -45,4 +46,13 @@ $('#all-search').bind('keyup', function(event){
             $(obj).css('display', 'table-row');
         }
     });
+});
+
+$('.show-toggle').bind('click', function(event){
+    var target = $('#' + $(this).attr('data-for'));
+    if(target.hasClass('hidden')){
+        target.show().removeClass('hidden');
+    } else {
+        target.hide().addClass('hidden');
+    }
 });
