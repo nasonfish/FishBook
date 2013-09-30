@@ -126,6 +126,7 @@ class Choir{
     }
 
     public function create($name, $email, $phone, $part, $notes, $contact){
+        if(empty($name)) return false;
         $check = new Predis\Command\SetIsMember();
         $check->setRawArguments(array('users', $name));
         if($this->db->executeCommand($check)){
@@ -168,6 +169,7 @@ class Choir{
     }
 
     public function edit($name, $email, $phone, $parts, $notes, $contact){
+        if(empty($name)) return false;
         $check = new Predis\Command\SetIsMember();
         $check->setRawArguments(array('users', $name));
         if(!$this->db->executeCommand($check)){
@@ -216,6 +218,7 @@ class Choir{
 
 
     public function delete($name){
+        if(empty($name)) return false;
         $check = new Predis\Command\SetIsMember();
         $check->setRawArguments(array('users', $name));
         if(!$this->db->executeCommand($check)){

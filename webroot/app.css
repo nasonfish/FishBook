@@ -49,6 +49,7 @@ tr.p50 td, tr.p50 th, td.p50, th.p50 {
     margin-right: 7%;
     margin-left: 7%;
     padding-top: 14px;
+    min-height: 100%;
 }
 
 input{
@@ -126,7 +127,7 @@ h1,h2,h3,h4,h5,h6{
 
 .bottom{
     width: 98.6%;
-    margin: 40px 0 0 0;
+    margin: 60px 0 0 0;
     padding: 0;
     background-color: #03523c;
     border-color: #03523c;

@@ -36,7 +36,7 @@
         <table class="bottom">
             <tr class="p50">
                 <td><a href="mailto:nasonfish@nasonfish.com" class="w-link">Have you found any bugs? Let me know!</a></td>
-                <td>Source code may be released soon!</td>
+                <td><a href="https://github.com/nasonfish/FishBook" class="w-link">Source code now available on GitHub!</a></td>
             </tr>
         </table>
     </div>
