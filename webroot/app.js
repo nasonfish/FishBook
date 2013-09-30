@@ -56,3 +56,17 @@ $('.show-toggle').bind('click', function(event){
         target.hide().addClass('hidden');
     }
 });
+
+$('.js-delete').bind('click', function(event){
+    var target = $(this.parentNode.parentNode);
+    $AJAX(
+        '/ajax_remover.php',
+        'POST',
+        {
+            id: target.attr('data-for')
+        },
+        function(data){
+            target.hide();
+        }
+    )
+});

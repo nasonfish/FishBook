@@ -91,7 +91,18 @@ class Choir{
     }
 
     public function deleteBuild($id){
-
+        $cmd = new Predis\Command\SetRemove();
+        $cmd->setRawArguments(array('builds', $id));
+        $this->db->executeCommand($cmd);
+        $cmd = new Predis\Command\KeyDelete();
+        $cmd->setRawArguments(array('build:' . $id . ':type'));
+        $this->db->executeCommand($cmd);
+        $cmd->setRawArguments(array('build:' . $id . ':glue'));
+        $this->db->executeCommand($cmd);
+        $cmd->setRawArguments(array('build:' . $id . ':data'));
+        $this->db->executeCommand($cmd);
+        $cmd->setRawArguments(array('build:' . $id . ':categories'));
+        $this->db->executeCommand($cmd);
     }
 
     public function getBuilds(){

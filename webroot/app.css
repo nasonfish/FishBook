@@ -17,6 +17,10 @@ tr.p25 td, tr.p25 th, td.p25, th.p25 {
     width: 25%;
 }
 
+tr.p16 td, tr.p16 th, td.p16, th.p16{
+    width: 16.66%;
+}
+
 tr.p20 td, tr.p20 th, td.p20, th.p20 {
     width: 20%;
 }
@@ -75,6 +79,7 @@ label{
 .js-click:hover{
     color: #406ddb;
     text-decoration: underline;
+    cursor: pointer;
 }
 
 .hr-gray hr, hr.hr-gray{
