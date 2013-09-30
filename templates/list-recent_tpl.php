@@ -12,8 +12,8 @@
     <tr class="p20">
         <td><a href="/list-create/?id=<?=$build->getID();?>"><?=$build->getID();?></td>
         <td><?=implode(', ', $build->getCategories());?></td>
-        <td><code><?=$build->getType();?></code></td>
         <td><?=ucwords($build->getData());?></td>
+        <td><code><?=$build->getType();?></code></td>
         <td><code class="pre"><?=$build->getGlue();?></code></td>
     </tr>
     <?php endforeach; ?>

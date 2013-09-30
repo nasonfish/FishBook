@@ -40,6 +40,25 @@ class Choir{
 */
 
     public function saveBuild($type, $categories, $glue, $data){
+        $cmd = new Predis\Command\SetMembers();
+        $cmd->setRawArguments(array('builds'));
+        foreach($this->db->executeCommand($cmd) as $build){
+            $cmd = new Predis\Command\SetMembers();
+            $cmd->setRawArguments(array('build:' . $build . ':categories'));
+            if($this->db->executeCommand($cmd) == $categories){
+                $cmd = new Predis\Command\StringGet();
+                $cmd->setRawArguments(array('build:' . $build . ':glue'));
+                if($this->db->executeCommand($cmd) == $glue){
+                    $cmd->setRawArguments(array('build:' . $build . ':data'));
+                    if($this->db->executeCommand($cmd) == $data){
+                        $cmd->setRawArguments(array('build:' . $build . ':type'));
+                        if($this->db->executeCommand($cmd) == $type){
+                            return;
+                        }
+                    }
+                }
+            }
+        }
         $cmd = new Predis\Command\KeyExists();
         $cmd->setRawArguments(array('builds:next_id'));
         if(!($this->db->executeCommand($cmd))){
@@ -69,6 +88,10 @@ class Choir{
         $cmd = new Predis\Command\StringIncrement();
         $cmd->setRawArguments(array('builds:next_id'));
         $this->db->executeCommand($cmd);
+    }
+
+    public function deleteBuild($id){
+
     }
 
     public function getBuilds(){
